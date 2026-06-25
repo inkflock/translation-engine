@@ -1,0 +1,74 @@
+%% Korean→English webnovel translation pipeline (run_pipeline.py)
+%% Paste into Excalidraw: top toolbar → search "mermaid" / Insert → "Mermaid to Excalidraw" → paste → Insert.
+%% Legend: [harness] = deterministic Python (no model). [subagent] = Claude worker on subscription.
+
+flowchart TD
+    SRC["📄 Bundled novel<br/>(ch.1–100 in one file)"]
+
+    %% ---------- Phase 1: slice ----------
+    SLICE["1 · slice  (harness)<br/>split into chapters + build mine prompts"]
+    CH["chapters/chNNN.txt<br/>mine_prompt/chNNN.txt"]
+
+    %% ---------- Stage 1: mine ----------
+    MINE["2 · MINE  (Sonnet subagents, N parallel)<br/>per chapter, no glossary → terms + summary"]
+    MINEOUT["mine/chNNN.txt<br/>(new_glossary_terms + chapter_summary)"]
+
+    %% ---------- normalize ----------
+    NORM["3 · normalize  (harness)<br/>clean_mined_terms · merge_mined_terms<br/>(key-normalize + majority vote) → draft glossary"]
+    SUMM["summaries.json (continuity timeline)"]
+    DRAFT["consolidate_prompt.txt<br/>(draft glossary)"]
+
+    %% ---------- consolidate ----------
+    CONS["4 · CONSOLIDATE  (Opus subagent ×1)<br/>dedupe entities · real-world names<br/>set enforce flag: transliteration=yes / translation=no"]
+    GLOS["glossary.json<br/>(canonical, enforce-tagged)"]
+
+    %% ---------- post-consolidate ----------
+    PC["5 · post-consolidate  (harness)<br/>render placeholder prompts:<br/>enforce → token [[G n]] · soft → plain rendering"]
+    TP["trans_prompt/chNNN.txt<br/>token_map.json"]
+
+    %% ---------- Stage 2: translate ----------
+    TR["6 · TRANSLATE  (Opus subagents, N parallel)<br/>emit [[G n]] tokens for enforce entities"]
+    TROUT["trans/chNNN.txt<br/>(translation + new terms + summary)"]
+
+    %% ---------- post-translate: defect detection ----------
+    PT["7 · post-translate  (harness)<br/>find_untokenized_enforce_terms (forget)<br/>find_invalid_tokens (out-of-range)"]
+    DEF{"any defects?"}
+    DJSON["defects.json<br/>forget / invalid counts<br/>repair_prompt/chNNN.txt"]
+
+    %% ---------- repair loop ----------
+    REP["8 · REPAIR  (Sonnet subagents)<br/>re-insert missed tokens · fix invalid tokens<br/>surgical, change nothing else"]
+    CHK{"check-repairs (harness)<br/>missing? out-of-bounds? residual?"}
+
+    %% ---------- finish ----------
+    FIN["9 · finish  (harness)<br/>apply_tokens → canonical English<br/>diff-guard · adherence score"]
+    GATE{"raw token left?<br/>(FAIL-CLOSED)"}
+    OUT["✅ deliverable<br/>SLUG_ch001-0NN_EN.txt<br/>+ report.json"]
+    HOLD["⛔ chapter WITHHELD<br/>NEEDS_HUMAN<br/>file marked _INCOMPLETE"]
+
+    SRC --> SLICE --> CH --> MINE --> MINEOUT --> NORM
+    NORM --> SUMM
+    NORM --> DRAFT --> CONS --> GLOS --> PC
+    SUMM --> PC
+    PC --> TP --> TR --> TROUT --> PT --> DEF
+    DEF -- no --> FIN
+    DEF -- yes --> DJSON --> REP --> CHK
+    CHK -- retry once (missing/out-of-bounds/residual) --> REP
+    CHK -- clean --> FIN
+    FIN --> GATE
+    GATE -- no --> OUT
+    GATE -- yes --> HOLD
+
+    classDef harness fill:#e3f2fd,stroke:#1565c0,color:#0d2b45;
+    classDef sonnet  fill:#e8f5e9,stroke:#2e7d32,color:#14361a;
+    classDef opus    fill:#f3e5f5,stroke:#6a1b9a,color:#2e0b3a;
+    classDef data    fill:#fff8e1,stroke:#f9a825,color:#4a3500;
+    classDef gate    fill:#ffebee,stroke:#c62828,color:#4a0d0d;
+    classDef good    fill:#e0f2f1,stroke:#00897b,color:#0a3d38;
+
+    class SLICE,NORM,PC,PT,FIN harness;
+    class MINE,REP sonnet;
+    class CONS,TR opus;
+    class CH,MINEOUT,SUMM,DRAFT,GLOS,TP,TROUT,DJSON data;
+    class DEF,CHK,GATE gate;
+    class OUT good;
+    class HOLD gate;

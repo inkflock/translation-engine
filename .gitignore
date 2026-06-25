@@ -1,0 +1,22 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Harness output and secrets
+results/
+.env
+
+# Per-novel pipeline scratch (reproducible; deliverables live in translated/)
+_work/
+fixtures/
+
+# OS noise
+.DS_Store
+
+# Pre-existing files unrelated to this project
+invitations/
+openspec/
+*.jpeg
+.claude/
+claude.sh

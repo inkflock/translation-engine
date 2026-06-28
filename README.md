@@ -83,7 +83,7 @@ The system is deliberately split into two layers:
 | --- | --- | --- |
 | **Miner** | Sonnet (×N, parallel) | Reads every chapter; extracts glossary terms + continuity summaries |
 | **Consolidator** | Opus (×1 per novel) | Entity resolution across the glossary; decides what gets hard-enforced |
-| **Translator** | Opus (×N, parallel) | Literary translation in placeholder-token mode |
+| **Translator** | Opus/Sonnet (×N, parallel) | Literary translation in placeholder-token mode |
 | **Repairer** | Sonnet (on-defect only) | Surgical re-tokenization of any residual defect |
 
 Model tiers are assigned by economics and task shape, not by default — the kind of

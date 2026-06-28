@@ -9,9 +9,7 @@ This repository is the validated reference implementation — the architecture,
 quality guarantees, and measured results that the production backend (Rust +
 Postgres) is built from.
 
-> Built by Inkflock — Korean web novel IP, licensed non-exclusively via revenue
-> share and distributed globally. This engine is the translation core of that
-> platform.
+> Built by Inkflock 
 
 ---
 

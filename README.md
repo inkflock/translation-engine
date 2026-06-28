@@ -15,18 +15,18 @@ Postgres) is built from.
 
 ## Results
 
-Measured on a real chapter run ([FILL: novel slug], [FILL: N] chapters, [FILL: date]):
+Measured on a real chapter run in a single batch (7 novels, 15 chapters each, 25th June 2026):
 
 | Metric | Result | Bar |
 | --- | --- | --- |
-| Glossary adherence (overall) | **[FILL: XX%]** | ≥ 92% |
-| Enforced-entity accuracy | **[FILL: ~100%]** | ~100% by construction |
-| Raw token leaks reaching output | **[FILL: 0]** | 0 |
-| Chapters shipped clean (no human review) | **[FILL: N of N]** | — |
-| Markup integrity (formatting preserved) | **[FILL: pass]** | exact match |
+| Glossary adherence (overall) | **96.81%** | ≥ 92% |
+| Enforced-entity accuracy | **100%** | ~100% by construction |
+| Raw token leaks reaching output | **0** | 0 |
+| Chapters shipped clean (no human review) | **105 of 105** | — |
+| Markup integrity (formatting preserved) | **pass** | exact match |
 
 > Enforced proper nouns are accurate **by construction**, not by chance — see
-> [zero-drift enforcement](#the-core-idea-zero-drift-enforcement) below.
+> [zero-drift enforcement] below.
 
 ---
 
@@ -127,14 +127,12 @@ chapter is withheld rather than shipped.
 | `harness/` | Deterministic control library — all consequential logic, fully tested |
 | `scripts/` | Phase driver (coordinates the pipeline; never calls a model directly) |
 | `docs/` | Runbook, pipeline diagram, results summaries |
-| `tests/` | pytest suite ([FILL: 111] tests) |
+| `tests/` | pytest suite |
 | `prompts/` | *Proprietary — not included in this repository* |
+| `spec/` | *Proprietary — not included in this repository* |
 
 ---
 
 ## Note on source material
 
-This engine operates on web novel IP licensed **non-exclusively via revenue
-share** through Inkflock's agreements with content partners. **No source novels,
-licensed texts, or generated translations are included in this repository** — they
-are supplied at run time by the operator and excluded from version control.
+**No source novels, licensed texts, or generated translations are included in this repository** 

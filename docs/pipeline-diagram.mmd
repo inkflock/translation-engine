@@ -27,7 +27,7 @@ flowchart TD
     TP["trans_prompt/chNNN.txt<br/>token_map.json"]
 
     %% ---------- Stage 2: translate ----------
-    TR["6 · TRANSLATE  (Opus subagents, N parallel)<br/>emit [[G n]] tokens for enforce entities"]
+    TR["6 · TRANSLATE  (Opus.Sonnet subagents, N parallel)<br/>emit [[G n]] tokens for enforce entities"]
     TROUT["trans/chNNN.txt<br/>(translation + new terms + summary)"]
 
     %% ---------- post-translate: defect detection ----------
